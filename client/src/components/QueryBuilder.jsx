@@ -471,10 +471,10 @@ export default function QueryBuilder() {
                   >
                     <MenuItem value="=">=</MenuItem>
                     <MenuItem value="!=">!=</MenuItem>
-                    <MenuItem value=">">></MenuItem>
-                    <MenuItem value=">=">>=</MenuItem>
-                    <MenuItem value="<"></MenuItem>
-                    <MenuItem value="<="></MenuItem>
+                    <MenuItem value=">"> > </MenuItem>
+                    <MenuItem value=">="> >=</MenuItem>
+                    <MenuItem value="<"> < </MenuItem>
+                    <MenuItem value="<="><=</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl sx={{ minWidth: 160 }}>
