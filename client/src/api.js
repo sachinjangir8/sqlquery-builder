@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// Use relative URL for production (same domain), absolute for development
+const baseURL = import.meta.env.PROD ? "/api" : "http://localhost:4000/api";
+
 export const api = axios.create({
-  baseURL: "/api",
+  baseURL,
   withCredentials: true,
 });
 

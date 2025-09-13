@@ -1,0 +1,16 @@
+{
+  "name": "sql-custom-command",
+  "version": "1.0.0",
+  "description": "SQL Custom Command - A full-stack application for building and executing SQL queries",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "install-all": "npm install && npm install --prefix client && npm install --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
