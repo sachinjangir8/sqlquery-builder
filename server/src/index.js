@@ -29,12 +29,6 @@ mongoose.connect(
 );
 
 const app = express();
-
-// Serve static files from client build in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../client/dist')));
-}
-
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
 app.use(
@@ -73,46 +67,46 @@ app.post("/api/query", requireAuth, async (req, res) => {
     const sessionId = req.session.id;
     const { db } = getOrCreateDbForSession(sessionId);
     const { table, columns, where, aggregations, joins } = req.body || {};
-    
+
     if (!table) {
       return res.status(400).json({ error: "table is required" });
     }
-    
+
     // Validate table exists
     const tables = await all(
       db,
       "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;"
     );
-    const tableExists = tables.some(t => t.name === table);
+    const tableExists = tables.some((t) => t.name === table);
     if (!tableExists) {
       return res.status(400).json({ error: `Table '${table}' does not exist` });
     }
-    
+
     const built = buildSelect({ table, columns, where, aggregations, joins });
     console.log("Executing SQL:", built.sql, "params:", built.params);
-    
+
     // Validate SQL before execution
-    if (!built.sql || built.sql.trim() === '') {
+    if (!built.sql || built.sql.trim() === "") {
       return res.status(400).json({ error: "Generated SQL is empty" });
     }
-    
+
     const rows = await all(db, built.sql, built.params);
     res.json({ sql: built.sql, rows });
   } catch (e) {
     console.error("Query error:", e);
-    
+
     // Provide more specific error messages
     let errorMessage = e.message;
-    if (e.code === 'SQLITE_ERROR') {
-      if (e.message.includes('no such column')) {
+    if (e.code === "SQLITE_ERROR") {
+      if (e.message.includes("no such column")) {
         errorMessage = `Column not found: ${e.message}`;
-      } else if (e.message.includes('no such table')) {
+      } else if (e.message.includes("no such table")) {
         errorMessage = `Table not found: ${e.message}`;
-      } else if (e.message.includes('syntax error')) {
+      } else if (e.message.includes("syntax error")) {
         errorMessage = `SQL syntax error: ${e.message}`;
       }
     }
-    
+
     res.status(500).json({ error: errorMessage });
   }
 });
@@ -254,13 +248,6 @@ function all(db, sql, params = []) {
   return new Promise((resolve, reject) =>
     db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)))
   );
-}
-
-// Catch-all handler: send back React's index.html file for client-side routing
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
-  });
 }
 
 const PORT = process.env.PORT || 4000;
